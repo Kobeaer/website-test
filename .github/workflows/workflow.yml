@@ -56,7 +56,7 @@ jobs:
   
         - name: Run OWASP ZAP Baseline Scan
           run: |
-            docker run -v $(pwd):/zap/wrk -t owasp/zap2docker-stable zap-baseline.py -t https://brave-meadow-0aff77e1e.6.azurestaticapps.net/ -r zap_report.html
+            docker run -v $(pwd):/zap/wrk -t owasp/zap zap-baseline.py -t https://yourwebsite.com -r zap_report.html
   
         - name: Upload ZAP Report as Artifact
           uses: actions/upload-artifact@v4
