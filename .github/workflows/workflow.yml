@@ -33,22 +33,23 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/test-website:latest
 
   nikto_security_scan:
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v4
+    runs-on: ubuntu-latest
 
-        - name: Run Nikto Web Scan
-          run: |
-            docker pull alpine/nikto
-            docker run --rm alpine/nikto -h https://yourwebsite.com -output nikto_report.html
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-        - name: Upload Nikto Report as Artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: nikto-security-report
-            path: nikto_report.html
+      - name: Run Nikto Web Scan
+        run: |
+          mkdir -p ./nikto_reports
+          docker pull alpine/nikto
+          docker run --rm alpine/nikto -h https://yourwebsite.com -output nikto_report.html
+          
+      - name: Upload Nikto Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nikto-security-report
+          path: ./nikto_reports/nikto_report.html
 
   deploy:
     runs-on: ubuntu-latest
