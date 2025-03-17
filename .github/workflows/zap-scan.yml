@@ -1,0 +1,31 @@
+name: OWASP ZAP Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 12 * * 1'  # Runs every Monday at 12:00 UTC
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run OWASP ZAP Baseline Scan
+        docker:
+          image: owasp/zap2docker-stable
+        run: |
+          zap-baseline.py -t https://yourwebsite.com -r zap_report.html
+
+      - name: Upload ZAP Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-security-report
+          path: zap_report.html
