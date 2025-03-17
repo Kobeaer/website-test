@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p ./nikto_reports
           docker pull alpine/nikto
-          docker run --rm alpine/nikto -h https://yourwebsite.com -output nikto_report.html
+          docker run --rm -v $(pwd)/nikto_reports:/output alpine/nikto -h https://brave-meadow-0aff77e1e.6.azurestaticapps.net -output /output/nikto_report.html
           
       - name: Upload Nikto Report as Artifact
         uses: actions/upload-artifact@v4
