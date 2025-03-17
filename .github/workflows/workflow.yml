@@ -42,12 +42,13 @@ jobs:
       - name: Create Output Directory
         run: |
           mkdir -p ./nikto_reports
+          chmod 777 ./nikto_reports  # Ensure write permissions
   
       - name: Run Nikto Web Scan
         run: |
           docker pull alpine/nikto
           docker run --rm -v $(pwd)/nikto_reports:/output alpine/nikto -h https://brave-meadow-0aff77e1e.6.azurestaticapps.net -o /output/nikto_report.html -Format htm
-            
+  
       - name: Upload Nikto Report as Artifact
         uses: actions/upload-artifact@v4
         with:
