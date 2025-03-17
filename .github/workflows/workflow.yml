@@ -32,6 +32,24 @@ jobs:
       - name: Push the image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/test-website:latest
 
+  nikto_security_scan:
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Run Nikto Web Scan
+          run: |
+            docker pull alpine/nikto
+            docker run --rm alpine/nikto -h https://yourwebsite.com -output nikto_report.html
+
+        - name: Upload Nikto Report as Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: nikto-security-report
+            path: nikto_report.html
+
   deploy:
     runs-on: ubuntu-latest
     needs: delivery
@@ -47,19 +65,3 @@ jobs:
           app_location: / # App source code path
           skip_app_build: true
           
-  zap_scan:
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
-  
-        - name: Run OWASP ZAP Baseline Scan
-          run: |
-            docker run -v $(pwd):/zap/wrk -t owasp/zap zap-baseline.py -t https://yourwebsite.com -r zap_report.html
-  
-        - name: Upload ZAP Report as Artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: zap-security-report
-            path: zap_report.html
